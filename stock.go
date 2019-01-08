@@ -12,7 +12,7 @@ import(
 type SimpleChaincode struct {}
 
 type stockdata {
-                ObjectType string 'json:"dcoType"'
+                ObjectType string 'json:"docType"'
                 tag string 'json:"tag"'
                 from string 'json:"from"'
                 to string 'json:"to"'
