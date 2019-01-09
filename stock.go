@@ -4,6 +4,7 @@ import(
                 "encoding/json"
                 "fmt"
                 "strings"
+                "strconv"
                 "bytes"
                 "github.com/hyperledger/fabric/core/chaincode/shim"
                 pb "github.com/hyperledger/fabric/protos/peer"
@@ -11,13 +12,12 @@ import(
 
 type SimpleChaincode struct {}
 
-type stockdata {
-                ObjectType string 'json:"docType"'
-                tag string 'json:"tag"'
-                from string 'json:"from"'
-                to string 'json:"to"'
-                stockName string 'json:"stockname"'
-                size int 'json:"size"'
+type donationlist struct {
+         ObjectType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	       tag       string `json:"tag"`    //the fieldtags are needed to keep case from bouncing around
+	       name      string `json:"name"`
+	       money       int    `json:"money"`
+         date      string `json:"date"`
 }
 
 func main() {
@@ -28,45 +28,48 @@ func main() {
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	      return shim.Success(nil)
+}
+
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
         function, args := stub.GetFunctionAndParameters()
                 fmt.Println("invoke running " + function)
 
                 if function == "insert" {
-                        return t.insertstock(stub, args)
-                }
-                else if function == "query" {
-                        return t.querystock(stub, args)
+                        return t.insert(stub, args)
+                } else if function == "query" {
+                        return t.query(stub, args)
                 }
 
         fmt.Printf("not function");
         return shim.Error("not funtion");
 }
 
-func (t *SimpleChaincode) insertstock(stub Shim.ChaincodeStubInterface, args []string) pb.Response{
+func (t *SimpleChaincode) insertstock(stub shim.ChaincodeStubInterface, args []string) pb.Response{
         var err error
 
-                objectType := "stocktrade"
+                objectType := "receive"
                 tag := args[0]
-                from := args[1]
-                to := args[2]
-                stockName := args[3]
-                                size := args[4]
+                name := args[1]
+                money, _ := strconv.Atoi(args[2])
+                date := args[3]
+            
 
-                stock := &stock{objectype, tag, from, to, stockName, size}
-        marbleJSONasBytes, err := json.Marshal(stock)
+                donationlist := &donationlist{objectype, tag, name, money, date}
+                marbleJSONasBytes, err := json.Marshal(stock)
                 if err != nil {
-                        return fmt.Printf(err.Error())
+                       return shim.Error(err.Error())
                 }
 
-        err = stub.PutState(tag, marbleJsonasBytes)
+        err = stub.PutState(tag, marbleJSONasBytes)
                 if err != nil {
                         return shim.Error(err.Error())
                 }
-        return shime.Success(nil)
+        return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) querystock(stub Shim.ChaincodeStubInterface, args []string) pb.Response {
-        var name, jsonResp string
+func (t *SimpleChaincode) querystock(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+        var tagname, jsonResp string
                 var err error
 
                 tagname = args[0]
