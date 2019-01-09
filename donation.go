@@ -1,4 +1,4 @@
-package donation
+package main
 
 import(
                 "encoding/json"
