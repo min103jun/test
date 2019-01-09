@@ -67,18 +67,65 @@ func (t *SimpleChaincode) insert(stub shim.ChaincodeStubInterface, args []string
 }
 
 func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-        var tagname, jsonResp string
+        var queryString, jsonResp string
                 var err error
 
-                tagname = args[0]
-                valAsbytes, err := stub.GetState(tagname)
-                if err != nil {
-                        jsonResp = "Error : Failed to get state for " + tagname
-                                return shim.Error(jsonResp)
-                } else if valAsbytes == nil {
-                        jsonResp = "Error : data does not exist"
-                                return shim.Error(jsonResp)
-                }
+                queryString = args[0]
+                vqueryResults, err := getQuertResultForQueryString(stub, queryString)
+	if err != nil {
+		return shim.Error(err.Error())
+        } 
 
-        return shim.Success(nil)
+        return shim.Success(queryResults)
+}
+
+func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
+
+	fmt.Printf("- getQueryResultForQueryString queryString:\n%s\n", queryString)
+
+	resultsIterator, err := stub.GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	buffer, err := constructQueryResponseFromIterator(resultsIterator)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("- getQueryResultForQueryString queryResult:\n%s\n", buffer.String())
+
+	return buffer.Bytes(), nil
+}
+
+func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) (*bytes.Buffer, error) {
+	// buffer is a JSON array containing QueryResults
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(queryResponse.Key)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(queryResponse.Value))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	return &buffer, nil
 }
