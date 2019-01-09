@@ -53,8 +53,8 @@ func (t *SimpleChaincode) insert(stub shim.ChaincodeStubInterface, args []string
                 date := args[3]
             
 
-                donationlist := &donationlist{objectype, tag, name, money, date}
-                marbleJSONasBytes, err := json.Marshal(stock)
+                donationlist := &donationlist{objectType, tag, name, money, date}
+                marbleJSONasBytes, err := json.Marshal(donationlist)
                 if err != nil {
                        return shim.Error(err.Error())
                 }
