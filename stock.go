@@ -1,11 +1,9 @@
-package stock
+package donation
 
 import(
                 "encoding/json"
-                "fmt"
-                "strings"
+                "fmt"                
                 "strconv"
-                "bytes"
                 "github.com/hyperledger/fabric/core/chaincode/shim"
                 pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -45,7 +43,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
         return shim.Error("not funtion");
 }
 
-func (t *SimpleChaincode) insertstock(stub shim.ChaincodeStubInterface, args []string) pb.Response{
+func (t *SimpleChaincode) insert(stub shim.ChaincodeStubInterface, args []string) pb.Response{
         var err error
 
                 objectType := "receive"
@@ -68,7 +66,7 @@ func (t *SimpleChaincode) insertstock(stub shim.ChaincodeStubInterface, args []s
         return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) querystock(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
         var tagname, jsonResp string
                 var err error
 
@@ -77,8 +75,7 @@ func (t *SimpleChaincode) querystock(stub shim.ChaincodeStubInterface, args []st
                 if err != nil {
                         jsonResp = "Error : Failed to get state for " + tagname
                                 return shim.Error(jsonResp)
-                }
-                else if valAsbytes == nil {
+                } else if valAsbytes == nil {
                         jsonResp = "Error : data does not exist"
                                 return shim.Error(jsonResp)
                 }
