@@ -4,6 +4,7 @@ import(
                 "encoding/json"
                 "fmt"                
                 "strconv"
+		"bytes"
                 "github.com/hyperledger/fabric/core/chaincode/shim"
                 pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -71,7 +72,7 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
                 var err error
 
                 queryString = args[0]
-                vqueryResults, err := getQuertResultForQueryString(stub, queryString)
+                queryResults, err := getQueryResultForQueryString(stub, queryString)
 	if err != nil {
 		return shim.Error(err.Error())
         } 
