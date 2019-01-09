@@ -29,7 +29,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	      return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
         function, args := stub.GetFunctionAndParameters()
                 fmt.Println("invoke running " + function)
 
