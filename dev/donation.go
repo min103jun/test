@@ -1,3 +1,6 @@
+//19-01-16
+//1. start data, end date 추가
+//2. 쿼리 결과를 json으로반환하기
 package main
   
 import(
@@ -60,8 +63,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
                 return t.insertVote(stub, args)
         } else if function == "insertVoteResult" {
                 return t.insertVoteResult(stub, args)
-        } else if function == "query" {
-                return t.query(stub, args)
         } else if function == "query" {
                 return t.query(stub, args)
         } else if function == "delete" {
