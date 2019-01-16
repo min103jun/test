@@ -1,6 +1,8 @@
 //19-01-16
 //1. start data, end date 추가
 //2. 쿼리 결과를 json으로반환하기
+//3. uservoteresult에 location추가하기 --> 투표이름과 지역이름으로 결과만 보는 함수 작성하기
+
 package main
   
 import(
