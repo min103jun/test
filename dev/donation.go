@@ -62,14 +62,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
                 return t.insertVoteResult(stub, args)
         } else if function == "query" {
                 return t.query(stub, args)
-        } else if function == "queryUser" {
-                return t.queryUser(stub, args)
-        } else if function == "queryVote" {
-                return t.queryVote(stub, args)
-        } else if function == "deleteUser" {
-                return t.deleteUser(stub, args)
-        } else if function == "deleteVote" {
-                return t.deleteVote(stub, args)
+        } else if function == "query" {
+                return t.query(stub, args)
+        } else if function == "delete" {
+                return t.delete(stub, args)
         }
 
         fmt.Printf("not function");
@@ -298,33 +294,7 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
         return &buffer, nil
 }
 
-func (t *SimpleChaincode) queryUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-        var queryString string
-        var err error
-        queryString = args[0]
-        queryResults, err := getQueryResultForQueryString(stub, queryString)
-        if err != nil {
-		 queryResults, err := getQueryResultForQueryString(stub, queryString)
-        if err != nil {
-                return shim.Error(err.Error())
-        }
-
-        return shim.Success(queryResults)
-}
-
-func (t *SimpleChaincode) queryVote(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-        var queryString string
-        var err error
-        queryString = args[0]
-        queryResults, err := getQueryResultForQueryString(stub, queryString)
-        if err != nil {
-                return shim.Error(err.Error())
-        }
-
-        return shim.Success(queryResults)
-}
-
-func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
         var err error
         userName := args[0]
         fmt.Printf("delete user named : %s\n", userName)
@@ -339,30 +309,6 @@ func (t *SimpleChaincode) deleteUser(stub shim.ChaincodeStubInterface, args []st
                 return shim.Error(err.Error())
         }
         err = stub.DelState(userName)
-        if err != nil {
-                fmt.Printf("DelState() error")
-                return shim.Error(err.Error())
-        }
-        fmt.Printf("deletion successed.\n")
-        return shim.Success(nil)
-}
-
-func (t *SimpleChaincode) deleteVote(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-        var err error
-        voteName := args[0]
-        fmt.Printf("delete vote named : %s\n", voteName)
-        // maybe i have to connect with vote database
-        existflag, err := stub.GetState(voteName)
-        if existflag == nil {
-                fmt.Printf("this vote not exist")
-                return shim.Error(err.Error())
-        }
-	if err != nil {
-                fmt.Printf("GetState() error")
-                return shim.Error(err.Error())
-        }
-
-        err = stub.DelState(voteName)
         if err != nil {
                 fmt.Printf("DelState() error")
                 return shim.Error(err.Error())
