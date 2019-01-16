@@ -10,8 +10,6 @@ import(
         pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-var userNum = 0
-
 type SimpleChaincode struct {}
 
 type user struct {
